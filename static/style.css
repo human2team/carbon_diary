@@ -1,0 +1,74 @@
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: #f4f4f9;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: #4CAF50;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-top: 1rem;
+}
+
+input, button {
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+.diary-list {
+  list-style: none;
+  padding: 0;
+}
+
+.diary-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.footprint {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.footprint .value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #4CAF50;
+}

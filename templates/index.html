@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>오늘의 활동 기록하기</h2>
+  <form method="POST">
+    <label>오늘 식사는 무엇을 하셨나요?</label>
+    <input type="text" name="meal" placeholder="예: 고기, 채소 위주">
+
+    <label>어떤 교통수단을 이용했나요?</label>
+    <input type="text" name="transport" placeholder="예: 자동차, 버스, 도보">
+
+    <label>컴퓨터를 몇 시간 사용했나요?</label>
+    <input type="text" name="computer" placeholder="예: 5">
+
+    <button type="submit">저장하기</button>
+  </form>
+</div>
+
+{% if latest %}
+<div class="card footprint">
+  <h2>오늘의 탄소 배출량</h2>
+  <p class="value">{{ latest.emissions }} kg</p>
+</div>
+{% endif %}
+
+<div class="card">
+  <h2>최근 기록</h2>
+  <ul class="diary-list">
+    {% for entry in diary %}
+    <li>{{ entry.entry_date }} | 식사: {{ entry.meal }} | 교통: {{ entry.transport }} | 컴퓨터: {{ entry.computer_hours }}시간 → <b>{{ entry.emissions }} kg</b></li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

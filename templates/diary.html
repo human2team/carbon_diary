@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>내 전체 기록</h2>
+  <ul class="diary-list">
+    {% for entry in diary %}
+    <li>{{ entry.entry_date }} | 식사: {{ entry.meal }} | 교통: {{ entry.transport }} | 컴퓨터: {{ entry.computer_hours }}시간 → <b>{{ entry.emissions }} kg</b></li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
