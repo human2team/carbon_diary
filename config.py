@@ -1,6 +1,11 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+    
 DB_CONFIG = {
-    "host": "localhost",
-    "user": "admin",
-    "password": "1234",   # 실제 비밀번호로 변경하세요
-    "database": "carbon_diary"
+    "host": os.getenv("DB_HOST"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "database": os.getenv("DB_NAME")
 }
