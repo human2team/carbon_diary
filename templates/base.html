@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>탄소 다이어리</title>
+  <!-- CSS 불러오기 -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+  <!--상단 헤더 -->
   <header>
     <h1>🌍 탄소 다이어리</h1>
     <nav>
@@ -13,6 +15,7 @@
       <a href="{{ url_for('diary_page') }}">내 기록</a>
     </nav>
   </header>
+  <!-- 메인 컨테이너 -->
   <div class="container">
     {% block content %}{% endblock %}
   </div>
