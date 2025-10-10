@@ -1,15 +1,49 @@
 body {
-  font-family: 'Noto Sans KR', sans-serif;
-  background: #f4f4f9;
+  font-family: 'Roboto', Arial, sans-serif;
+  background: linear-gradient(135deg, #e0f7e9, #c8e6c9); /* 자연을 연상시키는 녹색 계열 */
   margin: 0;
   padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding-top: 80px; /* 헤더 높이만큼 여백 추가 */
 }
 
 header {
-  background: #4CAF50;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(135deg, #388e3c, #2e7d32); /* 녹색 계열 그라데이션 */
   color: white;
-  padding: 1rem;
+  padding: 20px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
   text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+header nav {
+  margin-top: 10px;
+}
+
+header nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 16px;
+  transition: color 0.3s;
+}
+
+header nav a:hover {
+  color: #a5d6a7; /* 연한 녹색 */
 }
 
 .container {
@@ -19,11 +53,26 @@ header {
 }
 
 .card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-bottom: 1.5rem;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  margin: 20px 0;
+  width: 100%;
+  max-width: 700px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+  color: #2e7d32; /* 짙은 녹색 */
+  margin-bottom: 20px;
+  font-size: 24px;
+  text-align: center;
 }
 
 label {
@@ -31,24 +80,40 @@ label {
   margin-top: 1rem;
 }
 
-input, button {
-  padding: 0.5rem;
-  margin-top: 0.5rem;
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-field {
   width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-bottom: 20px;
 }
 
-button {
-  background: #4CAF50;
-  color: white;
+.input-field:focus {
+  border-color: #4caf50;
+  outline: none;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+button, .btn {
+  background: linear-gradient(135deg, #4caf50, #388e3c); /* 녹색 버튼 */
+  color: #ffffff;
+  padding: 12px;
   border: none;
-  font-weight: bold;
+  border-radius: 8px;
+  font-size: 16px;
   cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
 }
 
-button:hover {
-  background: #45a049;
+button:hover, .btn:hover {
+  background: linear-gradient(135deg, #388e3c, #2e7d32);
+  transform: scale(1.05);
 }
 
 .diary-list {
@@ -68,7 +133,80 @@ button:hover {
 }
 
 .footprint .value {
-  font-size: 2rem;
+  font-size: 28px;
   font-weight: bold;
-  color: #4CAF50;
+  color: #28a745;
+  text-align: center;
+}
+
+.diary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.diary-table th, .diary-table td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 12px;
+}
+
+.diary-table th {
+  background: linear-gradient(135deg, #388e3c, #2e7d32);
+  color: white;
+  font-weight: bold;
+}
+
+.diary-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.diary-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* 카드 스타일 라디오 버튼 */
+.card-group {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.card-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9f9f9;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  text-align: center;
+}
+
+.card-option input[type="radio"] {
+  display: none;
+}
+
+.card-option span {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.card-option:hover {
+  border-color: #4caf50;
+  background: #e8f5e9; /* 연한 녹색 */
+}
+
+.card-option input[type="radio"]:checked + span {
+  color: #ffffff;
+  background: #4caf50; /* 클릭 시 녹색 배경 */
+  border-radius: 8px;
+  padding: 5px 10px;
 }
