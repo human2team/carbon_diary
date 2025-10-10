@@ -1,34 +1,150 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="card">
+  <!-- 오늘 기록 입력 폼 -->
   <h2>오늘의 활동 기록하기</h2>
-  <form method="POST">
-    <label>오늘 식사는 무엇을 하셨나요?</label>
-    <input type="text" name="meal" placeholder="예: 고기, 채소 위주">
+  <form method="POST" class="form">
+    <label>오늘 식사는 무엇을 하셨나요? (복수 선택 가능)</label>
+    <div class="card-group">
+      <label class="card-option">
+        <input type="checkbox" name="meal[]" value="소고기">
+        <span>소고기 🥩</span>
+      </label>
+      <label class="card-option">
+        <input type="checkbox" name="meal[]" value="돼지고기">
+        <span>돼지고기 🍖</span>
+      </label>
+      <label class="card-option">
+        <input type="checkbox" name="meal[]" value="닭고기">
+        <span>닭고기 🍗</span>
+      </label>
+      <label class="card-option">
+        <input type="checkbox" name="meal[]" value="채식">
+        <span>채식 🥗</span>
+      </label>
+      <label class="card-option">
+        <input type="checkbox" name="meal[]" value="생선">
+        <span>생선 🐟</span>
+      </label>
+      <label class="card-option">
+        <input type="checkbox" name="meal[]" value="빵">
+        <span>빵 🥖</span>
+      </label>
+    </div>
 
     <label>어떤 교통수단을 이용했나요?</label>
-    <input type="text" name="transport" placeholder="예: 자동차, 버스, 도보">
+    <div class="card-group">
+      <label class="card-option">
+        <input type="radio" name="transport" value="자동차">
+        <span>자동차 🚗</span>
+      </label>
+      <label class="card-option">
+        <input type="radio" name="transport" value="버스">
+        <span>버스 🚌</span>
+      </label>
+      <label class="card-option">
+        <input type="radio" name="transport" value="기차">
+        <span>기차 🚆</span>
+      </label>
+      <label class="card-option">
+        <input type="radio" name="transport" value="도보">
+        <span>도보 🚶</span>
+      </label>
+      <label class="card-option">
+        <input type="radio" name="transport" value="비행기">
+        <span>비행기 ✈️</span>
+      </label>
+      <label class="card-option">
+        <input type="radio" name="transport" value="자전거">
+        <span>자전거 🚴</span>
+      </label>
+    </div>
 
     <label>컴퓨터를 몇 시간 사용했나요?</label>
-    <input type="text" name="computer" placeholder="예: 5">
+    <input type="number" name="computer" placeholder="예: 5" class="input-field" min="0" max="24">
 
-    <button type="submit">저장하기</button>
+    <button type="submit" class="btn">저장하기</button>
   </form>
 </div>
 
+<!-- 오늘의 탄소 발자국 -->
 {% if latest %}
 <div class="card footprint">
   <h2>오늘의 탄소 배출량</h2>
   <p class="value">{{ latest.emissions }} kg</p>
+  <div class="formula">
+    <h3>계산식</h3>
+    <ul>
+      <li>음식: {{ latest.meal_emission }} kg CO₂e</li>
+      <li>교통: {{ latest.transport_emission }} kg CO₂e</li>
+      <li>컴퓨터: {{ latest.computer_emission }} kg CO₂e</li>
+    </ul>
+    <p>총합: {{ latest.meal_emission }} + {{ latest.transport_emission }} + {{ latest.computer_emission }} = <b>{{ latest.emissions }} kg CO₂e</b></p>
+  </div>
 </div>
 {% endif %}
 
-<div class="card">
-  <h2>최근 기록</h2>
-  <ul class="diary-list">
-    {% for entry in diary %}
-    <li>{{ entry.entry_date }} | 식사: {{ entry.meal }} | 교통: {{ entry.transport }} | 컴퓨터: {{ entry.computer_hours }}시간 → <b>{{ entry.emissions }} kg</b></li>
+<!-- 내 기록 리스트 -->
+{% if all_entries %}
+<div class="card records">
+  <h2>내 기록</h2>
+  <ul>
+    {% for entry in all_entries %}
+    <li>
+      {{ entry.date }} - {{ entry.meal }} - {{ entry.transport }} - {{ entry.computer }}시간 - 
+      <span class="emission-detail" style="cursor:pointer;color:#007bff;text-decoration:underline;" onclick="showFormula('{{ entry.meal }}', '{{ entry.transport }}', '{{ entry.computer }}', '{{ entry.emissions }}')">{{ entry.emissions }} kg</span>
+      <form action="/delete/{{ entry.id }}" method="POST" style="display:inline;">
+        <button type="submit" class="btn-delete">삭제</button>
+      </form>
+    </li>
     {% endfor %}
   </ul>
+{% endif %}
+<!-- 계산식 팝업과 스크립트는 조건문 바깥에 위치 -->
+<div id="formulaModal" style="display:none;position:fixed;top:30%;left:50%;transform:translate(-50%,-30%);background:#fff;border:1px solid #ccc;padding:20px;z-index:1000;box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+  <h3>계산식</h3>
+  <div id="formulaContent"></div>
+  <button onclick="document.getElementById('formulaModal').style.display='none'">닫기</button>
 </div>
+<script>
+  function showFormula(meal, transport, computer, emissions) {
+    // 음식 계산식
+    var mealArr = meal.split(', ');
+    var mealFormula = mealArr.map(function(m) {
+      if (m === '소고기') return '소고기(13)';
+      if (m === '돼지고기') return '돼지고기(3.5)';
+      if (m === '닭고기') return '닭고기(3)';
+      if (m === '쌀') return '쌀(2)';
+      if (m === '채소') return '채소(0.5)';
+      if (m === '생선') return '생선(2.5)';
+      return m;
+    }).join(' + ');
+    var mealText = mealFormula ? mealFormula : '없음';
+
+    // 교통 계산식
+    var transportVal = 0;
+    var transportFormula = '';
+    var distance = 10; // 기본값(10km)
+    if (transport === '자동차') { transportVal = 0.21 * distance; transportFormula = '자동차(0.21×' + distance + ')'; }
+    else if (transport === '버스') { transportVal = 0.05 * distance; transportFormula = '버스(0.05×' + distance + ')'; }
+    else if (transport === '기차') { transportVal = 0.04 * distance; transportFormula = '기차(0.04×' + distance + ')'; }
+    else if (transport === '비행기') { transportVal = 0.15 * distance; transportFormula = '비행기(0.15×' + distance + ')'; }
+    else if (transport === '도보' || transport === '자전거') { transportVal = 0.01 * distance; transportFormula = transport + '(0.01×' + distance + ')'; }
+    else { transportFormula = '기본값(0.01×' + distance + ')'; transportVal = 0.01 * distance; }
+
+    // 컴퓨터 계산식
+    var computerVal = parseFloat(computer);
+    var computerEmission = (100/1000) * computerVal * 0.5;
+    var computerFormula = '100W×' + computerVal + '시간×0.5';
+
+    var html = `<ul>`;
+    html += `<li>음식: ` + mealText + `</li>`;
+    html += `<li>교통: ` + transportFormula + `</li>`;
+    html += `<li>컴퓨터: ` + computerFormula + `</li>`;
+    html += `</ul>`;
+    html += `<p>총합: (` + mealText + `) + (` + transportFormula + `) + (` + computerFormula + `) = <b>` + emissions + ` kg CO₂e</b></p>`;
+    document.getElementById('formulaContent').innerHTML = html;
+    document.getElementById('formulaModal').style.display = 'block';
+  }
+</script>
 {% endblock %}
