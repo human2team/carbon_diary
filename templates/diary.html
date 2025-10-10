@@ -1,11 +1,90 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+  .diary-table {
+    text-align: center;
+  }
+  .diary-table th, .diary-table td {
+    text-align: center;
+  }
+</style>
 <div class="card">
-  <h2>내 전체 기록</h2>
-  <ul class="diary-list">
-    {% for entry in diary %}
-    <li>{{ entry.entry_date }} | 식사: {{ entry.meal }} | 교통: {{ entry.transport }} | 컴퓨터: {{ entry.computer_hours }}시간 → <b>{{ entry.emissions }} kg</b></li>
-    {% endfor %}
-  </ul>
+  <h2>전체 기록</h2>
+  <table class="diary-table">
+    <thead>
+      <tr>
+        <th>날짜</th>
+        <th>식사</th>
+        <th>교통</th>
+        <th>컴퓨터 사용</th>
+        <th>배출량</th>
+        <th>삭제</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in diary %}
+      <tr>
+        <td>{{ entry.entry_date }}</td>
+        <td>{{ entry.meal }}</td>
+        <td>{{ entry.transport }}</td>
+        <td>{{ entry.computer_hours }}시간</td>
+        <td>
+          <span class="emission-detail" style="cursor:pointer;color:#007bff;text-decoration:underline;" onclick="showFormula('{{ entry.meal }}', '{{ entry.transport }}', '{{ entry.computer_hours }}', '{{ entry.emissions }}')">{{ entry.emissions }} kg</span>
+        </td>
+        <td>
+          <form action="/delete/{{ entry.id }}" method="POST" style="display:inline;">
+            <button type="submit" class="btn-delete">삭제</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+<!-- 계산식 팝업과 스크립트 -->
+<div id="formulaModal" style="display:none;position:fixed;top:30%;left:50%;transform:translate(-50%,-30%);background:#fff;border:1px solid #ccc;padding:20px;z-index:1000;box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+  <h3>계산식</h3>
+  <div id="formulaContent"></div>
+  <button onclick="document.getElementById('formulaModal').style.display='none'">닫기</button>
 </div>
+<script>
+  function showFormula(meal, transport, computer, emissions) {
+    // 음식 계산식
+    var mealArr = meal.split(', ');
+    var mealFormula = mealArr.map(function(m) {
+      if (m === '소고기') return '소고기(13)';
+      if (m === '돼지고기') return '돼지고기(3.5)';
+      if (m === '닭고기') return '닭고기(3)';
+      if (m === '쌀') return '쌀(2)';
+      if (m === '채소') return '채소(0.5)';
+      if (m === '생선') return '생선(2.5)';
+      return m;
+    }).join(' + ');
+    var mealText = mealFormula ? mealFormula : '없음';
+
+    // 교통 계산식
+    var transportVal = 0;
+    var transportFormula = '';
+    var distance = 10; // 기본값(10km)
+    if (transport === '자동차') { transportVal = 0.21 * distance; transportFormula = '자동차(0.21×' + distance + ')'; }
+    else if (transport === '버스') { transportVal = 0.05 * distance; transportFormula = '버스(0.05×' + distance + ')'; }
+    else if (transport === '기차') { transportVal = 0.04 * distance; transportFormula = '기차(0.04×' + distance + ')'; }
+    else if (transport === '비행기') { transportVal = 0.15 * distance; transportFormula = '비행기(0.15×' + distance + ')'; }
+    else if (transport === '도보' || transport === '자전거') { transportVal = 0.01 * distance; transportFormula = transport + '(0.01×' + distance + ')'; }
+    else { transportFormula = '기본값(0.01×' + distance + ')'; transportVal = 0.01 * distance; }
+
+    // 컴퓨터 계산식
+    var computerVal = parseFloat(computer);
+    var computerEmission = (100/1000) * computerVal * 0.5;
+    var computerFormula = '100W×' + computerVal + '시간×0.5';
+
+    var html = `<ul>`;
+    html += `<li>음식: ` + mealText + `</li>`;
+    html += `<li>교통: ` + transportFormula + `</li>`;
+    html += `<li>컴퓨터: ` + computerFormula + `</li>`;
+    html += `</ul>`;
+    html += `<p>총합: (` + mealText + `) + (` + transportFormula + `) + (` + computerFormula + `) = <b>` + emissions + ` kg CO₂e</b></p>`;
+    document.getElementById('formulaContent').innerHTML = html;
+    document.getElementById('formulaModal').style.display = 'block';
+  }
+</script>
 {% endblock %}
